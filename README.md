@@ -1,7 +1,8 @@
 # jaxkuramoto
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/jaxkuramoto)
 ![PyPI](https://img.shields.io/pypi/v/jaxkuramoto)
-Kuramoto model written in JAX
+
+JAX implementation of the Kuramoto model.
 
 
 ## Installation
