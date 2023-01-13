@@ -30,7 +30,7 @@ def odeint(vector_fn: VECTOR_FN, solver: SOLVER, t0: float, t1: float, dt: float
         observable_fn = lambda _x: _x
     # create observables list
     observable_1st = observable_fn(init_state)
-    observables = jnp.zeros((n_step, *(observable_1st.shape)))
+    observables = jnp.zeros(shape=(n_step, *(observable_1st.shape)), dtype=observable_1st.dtype)
     observables = observables.at[0].set(observable_1st)
     @jit
     def body_fn(i, val):
