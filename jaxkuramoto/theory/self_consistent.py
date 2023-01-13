@@ -31,7 +31,7 @@ def self_consistent_rhs_uniform(r, K, gamma):
     phi = jnp.where(gamma>K*r, 0.5*jnp.pi, jnp.minimum(0.5*jnp.pi, jnp.arcsin(gamma/(K * r))))
     return 0.5 * r * K * (phi + 0.5 * jnp.sin(2 * phi)) / gamma
 
-def orderparam(K, dist: Distribution, n, r_guess=1.0, eps=1e-6):
+def orderparam(K, dist: Distribution, n=10**3, r_guess=1.0, eps=1e-6):
     """Solve the self-consistent equation for the Kuramoto model and return the order parameter.
 
     Args:
