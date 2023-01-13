@@ -7,7 +7,7 @@ class Distribution:
         self.symmetric = None
         self.unimodal = None
         self.y_max = None
-        self._eps = 1e-4
+        self._eps = 1e-6
 
     def sample(self, key, shape):
         raise NotImplementedError()
@@ -40,7 +40,7 @@ class Distribution:
             counter, key, samples = val
             _u, _v = random.uniform(key, (2,))
             u = x_min + (_u * (x_max - x_min))
-            v = _v * self.y_max
+            v = _v * self.y_max * 1.05
             flag = jnp.where(v <= self.pdf(u), 1, 0)
             samples = samples.at[counter * flag].set(u)
             counter += flag
