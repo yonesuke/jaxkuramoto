@@ -1,6 +1,9 @@
+from typing import Optional
+
 from functools import partial
 import jax.numpy as jnp
 from jaxkuramoto.solver import integral_fn, fixed_point
+from jaxkuramoto.distribution import Distribution
 
 def self_consistent_rhs(r, K, pdf_fn, n):
     """Right-hand side of the self-consistent equation for the Kuramoto model.
@@ -28,12 +31,12 @@ def self_consistent_rhs_uniform(r, K, gamma):
     phi = jnp.where(gamma>K*r, 0.5*jnp.pi, jnp.minimum(0.5*jnp.pi, jnp.arcsin(gamma/(K * r))))
     return 0.5 * r * K * (phi + 0.5 * jnp.sin(2 * phi)) / gamma
 
-def orderparam(K, pdf_fn, n, r_guess=1.0, eps=1e-6):
+def orderparam(K, dist: Distribution, n, r_guess=1.0, eps=1e-6):
     """Solve the self-consistent equation for the Kuramoto model and return the order parameter.
 
     Args:
         K: The coupling strength.
-        pdf_fn: A function of the form pdf_fn(x) -> y.
+        dist: A function of the form pdf_fn(x) -> y.
         n: Number of trapezoids to use in the integral.
         r_guess: The initial guess for the order parameter.
         eps: The tolerance for the fixed point solver.
@@ -41,10 +44,17 @@ def orderparam(K, pdf_fn, n, r_guess=1.0, eps=1e-6):
     Returns:
         Order parameter.
     """
-    orderparam = fixed_point(partial(self_consistent_rhs, pdf_fn=pdf_fn, n=n), K, r_guess, eps)
-    return orderparam
+    if (not dist.symmetric) or (not dist.unimodal):
+        raise ValueError("Distribution must be symmetric and unimodal.")
+    if dist.__class__.__name__ == "Uniform":
+        return _orderparam_uniform(K, dist.scale, r_guess, eps)
+    elif dist.__class__.__name__ == "Cauchy":
+        return _orderparam_cauchy(K, dist.gamma)
+    else:
+        pdf_centered = lambda x: dist.pdf(x - dist.loc)
+        return fixed_point(partial(self_consistent_rhs, pdf_fn=pdf_centered, n=n), K, r_guess, eps)
 
-def orderparam_cauchy(K, gamma):
+def _orderparam_cauchy(K, gamma):
     """Return the order parameter for the Kuramoto model with Cauchy natural frequency distribution.
 
     Args:
@@ -57,7 +67,7 @@ def orderparam_cauchy(K, gamma):
     Kc = 2.0 * gamma
     return jnp.where(K > Kc, jnp.sqrt(1.0 - Kc / K), 0.0)
 
-def orderparam_uniform(K, gamma, r_guess=1.0, eps=1e-6):
+def _orderparam_uniform(K, gamma, r_guess=1.0, eps=1e-6):
     """Solve the self-consistent equation for the Kuramoto model with uniform natural frequency distribution and return the order parameter.
 
     Args:

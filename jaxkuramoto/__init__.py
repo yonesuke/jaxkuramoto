@@ -1,4 +1,3 @@
-from jaxkuramoto import solver
-from jaxkuramoto import theory
+from jaxkuramoto import solver, theory, distribution
 from jaxkuramoto.kuramoto import Kuramoto
 from jaxkuramoto.ode import odeint
