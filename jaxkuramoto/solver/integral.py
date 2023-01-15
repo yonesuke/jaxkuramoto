@@ -3,7 +3,7 @@ from functools import partial
 import jax.numpy as jnp
 from jax import vmap, grad, custom_vjp
 
-@partial(custom_vjp, nondiff_argnums=(0, 4))
+@partial(custom_vjp, nondiff_argnums=(0))
 def integral_fn(func, a, minval, maxval, n) -> float:
     """Integrate a function from minval to maxval using the trapezoidal rule.
 
@@ -32,6 +32,6 @@ def integral_bwd(func, res, integral_bar):
     maxval_bar = integral_bar * func(maxval, a)
     f_grad = grad(func, argnums=1)
     a_bar = integral_bar * integral_fn(f_grad, a, minval, maxval, n)
-    return a_bar, minval_bar, maxval_bar
+    return a_bar, minval_bar, maxval_bar, jnp.zeros_like(n)
 
 integral_fn.defvjp(integral_fwd, integral_bwd)

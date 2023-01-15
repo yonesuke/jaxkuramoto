@@ -3,7 +3,7 @@ from jax.lax import while_loop
 import jax.numpy as jnp
 from jax import vjp, custom_vjp
 
-@partial(custom_vjp, nondiff_argnums=(0, 2, 3))
+@partial(custom_vjp, nondiff_argnums=(0, ))
 def fixed_point(func, a, x_guess, eps=1e-6):
     """Find the fixed point of a function using Newton's method.
 
@@ -40,6 +40,6 @@ def fixed_point_bwd(func, res, x_star_bar):
     _, vjp_a = vjp(lambda _a: func(_a, x_star), a)
     w = fixed_point(partial(rev_iter, func), (a, x_star, x_star_bar), x_star, eps)
     a_bar, = vjp_a(w)
-    return a_bar
+    return a_bar, jnp.zeros_like(x_star), None
 
 fixed_point.defvjp(fixed_point_fwd, fixed_point_bwd)
