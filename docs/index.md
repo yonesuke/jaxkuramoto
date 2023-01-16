@@ -1,11 +1,16 @@
 # Welcome to jaxkuramoto!
 
-This is a small sample book to give you a feel for how book content is
-structured.
-It shows off a few of the major file types, as well as some sample content.
-It does not go in-depth into any particular topic - check out [the Jupyter Book documentation](https://jupyterbook.org) for more information.
+`jaxkuramoto` is a Python library for simulating the Kuramoto model, which has the following differential equation:
 
-Check out the content pages bundled with this sample book to see more.
+$$
+\frac{\mathrm{d}\theta_{i}}{\mathrm{d} t}= \omega_{i} + \frac{K}{N}\sum_{j=1}^{N}\sin(\theta_{j}-\theta_{i}).
+$$
+
+It is built on top of [JAX](https://github.com/google/jax), a library for differentiable programming in Python. It is designed to be easy to use and to be compatible with JAX's JIT compilation and GPU acceleration.
+
+![](figs/sync_nonsync.gif)
+
+You can view the source code on [GitHub](https://github.com/yonesuke/jaxkuramoto).
 
 ```{tableofcontents}
 ```
