@@ -1,4 +1,5 @@
 jupyter-book
 matplotlib
+jaxlib
 jax
 jaxkuramoto
