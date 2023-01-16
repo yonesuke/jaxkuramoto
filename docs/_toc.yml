@@ -9,6 +9,7 @@ parts:
   - file: markdown
   - file: notebooks
   - file: markdown-notebooks
+  - file: distributions
 - caption: Examples
   chapters:
   - file: examples/kuramoto
