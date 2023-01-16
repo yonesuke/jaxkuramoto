@@ -14,3 +14,4 @@ parts:
   chapters:
   - file: examples/kuramoto
   - file: examples/bifurcation
+  - file: examples/ott_antonsen
