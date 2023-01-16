@@ -21,3 +21,4 @@ parts:
   - file: ode_solver
   - file: nonlinear_solver
   - file: distributions
+  - file: models
