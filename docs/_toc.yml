@@ -4,12 +4,18 @@
 format: jb-book
 root: index
 parts:
-- caption: Tutorial
+- caption: Getting Started
   chapters:
-  - file: ode_solver
-  - file: distributions
+  - file: installation
+  - file: synchronization
+  - file: why_kuramoto
 - caption: Examples
   chapters:
   - file: examples/kuramoto
   - file: examples/bifurcation
   - file: examples/ott_antonsen
+- caption: Guides
+  chapters:
+  - file: ode_solver
+  - file: nonlinear_solver
+  - file: distributions
