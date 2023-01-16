@@ -12,3 +12,4 @@ parts:
 - caption: Examples
   chapters:
   - file: examples/kuramoto
+  - file: examples/bifurcation
