@@ -14,6 +14,7 @@ parts:
   - file: examples/kuramoto
   - file: examples/bifurcation
   - file: examples/ott_antonsen
+  - file: exapmles/phase_shift
 - caption: Guides
   chapters:
   - file: ode_solver
