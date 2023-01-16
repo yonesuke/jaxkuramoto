@@ -7,6 +7,7 @@
 
 JAX implementation of the Kuramoto model.
 
+![](docs/figs/sync_nonsync.gif)
 
 ## Installation
 `jaxkuramoto` can be installed with pip with the following command:
