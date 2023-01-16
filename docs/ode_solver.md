@@ -1,4 +1,4 @@
-# List of available ODE solvers
+# List of ODE solvers
 
 ## Euler method
 

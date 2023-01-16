@@ -1,4 +1,4 @@
-# List of available nonlinear solver
+# List of nonlinear solvers
 
 ## Iterative method
 
