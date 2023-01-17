@@ -1,10 +1,11 @@
-from typing import Optional
-
 from functools import partial
 import jax.numpy as jnp
+from jax import jit
+from jax.lax import cond
 from jaxkuramoto.solver import integral_fn, fixed_point
 from jaxkuramoto.distribution import Distribution
 
+@partial(jit, static_argnums=(2, 3))
 def self_consistent_rhs(r, K, pdf_fn, n):
     """Right-hand side of the self-consistent equation for the Kuramoto model.
 
@@ -23,12 +24,19 @@ def self_consistent_rhs(r, K, pdf_fn, n):
     Returns:
         Right-hand side of the self-consistent equation.
     """
+    @jit
     def integrand_fn(x, a):
         return jnp.cos(x)**2 * pdf_fn(a * jnp.sin(x))
     return K * r * integral_fn(integrand_fn, K * r, -0.5*jnp.pi, 0.5*jnp.pi, n=n)
 
+@jit
 def self_consistent_rhs_uniform(r, K, gamma):
-    phi = jnp.where(gamma>K*r, 0.5*jnp.pi, jnp.minimum(0.5*jnp.pi, jnp.arcsin(gamma/(K * r))))
+    phi = cond(
+        gamma > K * r, # condition
+        lambda _: 0.5 * jnp.pi, # true branch
+        lambda _: jnp.minimum(0.5 * jnp.pi, jnp.arcsin(gamma / (K * r))), # false branch
+        None # operand
+    )
     return 0.5 * r * K * (phi + 0.5 * jnp.sin(2 * phi)) / gamma
 
 def orderparam(K, dist: Distribution, n=10**3, r_guess=1.0, eps=1e-6):
@@ -54,6 +62,7 @@ def orderparam(K, dist: Distribution, n=10**3, r_guess=1.0, eps=1e-6):
         pdf_centered = lambda x: dist.pdf(x - dist.loc)
         return fixed_point(partial(self_consistent_rhs, pdf_fn=pdf_centered, n=n), K, r_guess, eps)
 
+@jit
 def _orderparam_cauchy(K, gamma):
     """Return the order parameter for the Kuramoto model with Cauchy natural frequency distribution.
 
@@ -65,8 +74,14 @@ def _orderparam_cauchy(K, gamma):
         Order parameter.
     """
     Kc = 2.0 * gamma
-    return jnp.where(K > Kc, jnp.sqrt(1.0 - Kc / K), 0.0)
+    return cond(
+        K > Kc, # condition
+        lambda _: jnp.sqrt(1.0 - Kc / K), # true branch
+        lambda _: 0.0, # false branch
+        None # operand
+    )
 
+@jit
 def _orderparam_uniform(K, gamma, r_guess=1.0, eps=1e-6):
     """Solve the self-consistent equation for the Kuramoto model with uniform natural frequency distribution and return the order parameter.
 
