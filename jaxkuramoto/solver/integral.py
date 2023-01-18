@@ -18,9 +18,8 @@ def integral_fn(func, a, minval, maxval, n) -> float:
         The value of the integral.
     """
     xs = jnp.linspace(minval, maxval, n+1)
-    val = 2 * jnp.sum(vmap(lambda _x: func(_x, a))(xs)) - func(minval, a) - func(maxval, a)
-    val = val * (maxval - minval) / (2 * n)
-    return val
+    arr = vmap(lambda _x: func(_x, a))(xs)
+    return jnp.trapz(arr, x=xs)
 
 def integral_fwd(func, a, minval, maxval, n):
     integral_val = integral_fn(func, a, minval, maxval, n)
