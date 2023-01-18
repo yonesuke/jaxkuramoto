@@ -6,6 +6,7 @@ class Distribution:
     def __init__(self):
         self.symmetric = None
         self.unimodal = None
+        self.interval = None
         self.y_max = None
         self._eps = 1e-6
 

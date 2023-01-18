@@ -21,6 +21,7 @@ class Uniform(Distribution):
         self.unimodal = True
         self.low = low
         self.high = high
+        self.interval = (low, high)
         self.loc = 0.5 * (low + high)
         self.scale = 0.5 * (high - low)
         self.y_max = 1.0 / (self.high - self.low)

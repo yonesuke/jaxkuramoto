@@ -25,6 +25,7 @@ class GeneralCauchy(Distribution):
             raise ValueError("N must be positive.")
         self.symmetric = True
         self.unimodal = True
+        self.interval = (-jnp.inf, jnp.inf)
         self.loc = loc
         self.gamma = gamma
         self.n = n

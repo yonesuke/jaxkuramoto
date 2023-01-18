@@ -22,6 +22,7 @@ class Normal(Distribution):
             raise ValueError("Scale must be positive.")
         self.symmetric = True
         self.unimodal = True
+        self.interval = (-jnp.inf, jnp.inf)
         self.loc = loc
         self.scale = scale
         self.y_max = 1.0 / jnp.sqrt(2 * jnp.pi) / self.scale

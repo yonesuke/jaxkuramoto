@@ -22,6 +22,7 @@ class Cauchy(Distribution):
             raise ValueError("Gamma must be positive.")
         self.symmetric = True
         self.unimodal = True
+        self.interval = (-jnp.inf, jnp.inf)
         self.loc = loc
         self.gamma = gamma
         self.y_max = 1.0 / jnp.pi / self.gamma

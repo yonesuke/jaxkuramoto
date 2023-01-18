@@ -9,6 +9,7 @@ class CauchyMultiply(Distribution):
         self.Omega = Omega
         self.gamma1 = gamma1
         self.gamma2 = gamma2
+        self.interval = (-jnp.inf, jnp.inf)
         self.normalizer = gamma1*gamma2*((gamma1+gamma2)**2+4.0*Omega**2)/jnp.pi/(gamma1+gamma2)
         self.find_max()
         self._eps = jnp.minimum(1e-4, 0.5 / jnp.pi / (gamma1 + gamma2))
