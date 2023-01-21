@@ -56,6 +56,8 @@ class SakaguchiKuramoto(ODE):
         self.omegas = omegas
         self.K = K
         self.alpha = alpha
+        self.cos_alpha = jnp.cos(alpha)
+        self.sin_alpha = jnp.sin(alpha)
         self.n_oscillator = omegas.shape[0]
 
     def vector_fn(self, t, thetas: jnp.ndarray) -> jnp.ndarray:
@@ -70,7 +72,7 @@ class SakaguchiKuramoto(ODE):
         """
         coss, sins = jnp.cos(thetas + self.alpha), jnp.sin(thetas + self.alpha)
         rx, ry = coss.mean(), sins.mean()
-        return self.omegas + self.K * (ry * coss - rx * sins)
+        return self.omegas + self.K * (self.cos_alpha * ry + self.sin_alpha * rx) * coss - self.K * (self.cos_alpha * rx - self.sin_alpha * ry) * sins
 
     def orderparameter(self, thetas: jnp.ndarray) -> float:
         """Order parameter.
