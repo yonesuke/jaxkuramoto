@@ -1,0 +1,4 @@
+matplotlib
+jaxlib
+jax
+jaxkuramoto
