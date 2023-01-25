@@ -29,10 +29,11 @@ class Kuramoto(ODE):
         rx, ry = coss.mean(), sins.mean()
         return self.omegas + self.K * (ry * coss - rx * sins)
 
-    def orderparameter(self, thetas: jnp.ndarray) -> float:
+    def orderparameter(self, t: float, thetas: jnp.ndarray) -> float:
         """Order parameter.
 
         Args:
+            t (float): time
             thetas (jnp.ndarray): Oscillator phases.
             
         Returns:
@@ -74,10 +75,11 @@ class SakaguchiKuramoto(ODE):
         rx, ry = coss.mean(), sins.mean()
         return self.omegas + self.K * (self.cos_alpha * ry + self.sin_alpha * rx) * coss - self.K * (self.cos_alpha * rx - self.sin_alpha * ry) * sins
 
-    def orderparameter(self, thetas: jnp.ndarray) -> float:
+    def orderparameter(self, t: float, thetas: jnp.ndarray) -> float:
         """Order parameter.
 
         Args:
+            t (float): time
             thetas (jnp.ndarray): Oscillator phases.
             
         Returns:
