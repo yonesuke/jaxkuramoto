@@ -18,13 +18,13 @@ class OttAntonsen(ODE):
         self.K = K
         if self.dist_name == "Cauchy":
             self.vector_fn = self._vector_fn_cauchy
-            self.to_orderparam = lambda z: jnp.abs(z)
+            self.to_orderparam = lambda _, z: jnp.abs(z)
         elif self.dist_name == "CauchyMultiply":
             self.vector_fn = self._vector_fn_cauchymultiply
             self.k1 = dist.gamma2 * (2 * dist.Omega - 1j * (dist.gamma1 + dist.gamma2)) / (dist.gamma1 + dist.gamma2) / (2 * dist.Omega + 1j * (dist.gamma1 - dist.gamma2))
             self.k2 = dist.gamma1 * (2 * dist.Omega + 1j * (dist.gamma1 + dist.gamma2)) / (dist.gamma1 + dist.gamma2) / (2 * dist.Omega + 1j * (dist.gamma1 - dist.gamma2))
             self.zs2z = lambda zs: self.k1 * zs[0] + self.k2 * zs[1]
-            self.to_orderparam = lambda zs: jnp.abs(self.zs2z(zs))
+            self.to_orderparam = lambda _, zs: jnp.abs(self.zs2z(zs))
         else:
             raise ValueError("Distribution must be Cauchy or CauchyMultiply.")
 
