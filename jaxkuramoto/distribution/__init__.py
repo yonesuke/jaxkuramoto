@@ -5,3 +5,4 @@ from .uniform import Uniform
 from .general_normal import GeneralNormal
 from .general_cauchy import GeneralCauchy
 from .cauchy_multiply import CauchyMultiply
+from .finite_differential import FiniteDifferential
