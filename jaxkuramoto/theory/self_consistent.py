@@ -45,6 +45,7 @@ def self_consistent_rhs_normal(r, K, sigma):
     i0_val, i1_val = i0(0.25 * K * K * r * r / sigma / sigma), i1(0.25 * K * K * r * r / sigma / sigma)
     return 0.5 * r * K / sigma * jnp.sqrt(0.5 * jnp.pi) * jnp.exp(-0.25 * r**2 * K**2 / sigma**2) * (i0_val + i1_val)
 
+@partial(jnp.vectorize, excluded=(1, ))
 def orderparam(K, dist: Distribution, n=10**3, r_guess=1.0, eps=1e-6):
     """Solve the self-consistent equation for the Kuramoto model and return the order parameter.
 
