@@ -9,6 +9,8 @@ parts:
   - file: installation
   - file: synchronization
   - file: why_kuramoto
+  - file: howto_odeint
+  - file: howto_distribution
 - caption: Examples
   chapters:
   - file: examples/kuramoto
