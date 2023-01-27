@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="jaxkuramoto",
-    version="0.0.5",
+    version="0.0.6",
     install_requires=[
         "jax",
     ],
