@@ -22,6 +22,29 @@ class ODE:
         raise NotImplementedError()
 
 def odeint(vector_fn: VECTOR_FN, solver: SOLVER, t0: float, t1: float, dt: float, init_state: jnp.ndarray, observable_fn: OBSERVABLE_FN=None):
+    """Integrate the ODE.
+    
+    Args:
+        vector_fn (VECTOR_FN): Vector field of the ODE.
+        solver (SOLVER): Solver of the ODE.
+        t0 (float): Initial time.
+        t1 (float): Final time.
+        dt (float): Time step.
+        init_state (jnp.ndarray): Initial state.
+        observable_fn (OBSERVABLE_FN, optional): Function to calculate observables. Defaults to None.
+        
+    Returns:
+        Solution: Solution class.
+
+    Raises:
+        ValueError: If t0 >= t1 or dt <= 0.
+    """
+    # check input
+    if t0 >= t1:
+        raise ValueError("t0 must be smaller than t1.")
+    if dt <= 0:
+        raise ValueError("dt must be positive.")
+    # create update function
     update_fn = jit(lambda t, state: solver(vector_fn, t, dt, state))
     ts = jnp.arange(t0, t1, dt)
     n_step = ts.shape[0]
@@ -42,13 +65,14 @@ def odeint(vector_fn: VECTOR_FN, solver: SOLVER, t0: float, t1: float, dt: float
     # run!!
     final_state, observables = fori_loop(1, n_step, body_fn, (init_state, observables))
     # store the result to Solution class
-    sol = Solution()
-    sol.t0 = t0
-    sol.t1 = t1
-    sol.ts = ts
-    sol.init_state = init_state
-    sol.final_state = final_state
-    sol.observables = observables
+    sol = Solution(
+        t0=t0,
+        t1=t1,
+        ts=ts,
+        init_state=init_state,
+        final_state=final_state,
+        observables=observables
+    )
     return sol
 
 def odeint_resume():
