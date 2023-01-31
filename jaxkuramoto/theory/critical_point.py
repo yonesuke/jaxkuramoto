@@ -1,16 +1,15 @@
+from typing import Callable
+
 import jax.numpy as jnp
 
-def critical_point(pdf_fn, loc=0.0):
-    """Find the critical coupling strength for the Kuramoto model.
+def critical_point(pdf_fn: Callable, loc: float = 0.0) -> float:
+    r"""Find the critical coupling strength for the Kuramoto model.
     
     Args:
-        `pdf_fn`: A function of the form pdf_fn(x) -> y.
-        `loc`: The center of the distribution.
+        pdf_fn (Callable): A function of the form :math:`x\mapsto p(x)`.
+        loc (float): The center of the distribution.
     
     Returns:
-        Critical coupling strength Kc.
-
-    Notes:
-        `pdf_fn` must be normalized, symmetric, and have a single maximum at `loc`.
+        The critical coupling strength :math:`K_{\mathrm{c}}`.
     """
     return 2.0 / jnp.pi / pdf_fn(loc)

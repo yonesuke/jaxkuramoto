@@ -21,7 +21,7 @@ class ODE:
         """
         raise NotImplementedError()
 
-def odeint(vector_fn: VECTOR_FN, solver: SOLVER, t0: float, t1: float, dt: float, init_state: jnp.ndarray, observable_fn: OBSERVABLE_FN=None):
+def odeint(vector_fn: VECTOR_FN, solver: SOLVER, t0: float, t1: float, dt: float, init_state: jnp.ndarray, observable_fn: OBSERVABLE_FN=None) -> Solution:
     """Integrate the ODE.
     
     Args:

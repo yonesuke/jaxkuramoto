@@ -24,3 +24,6 @@ parts:
   - file: nonlinear_solver
   - file: distributions
   - file: models
+- caption: Package Reference
+  chapters:
+  - file: api
