@@ -1,5 +1,13 @@
 # How to use `odeint`
 
+```{warning}
+Currently, we are using `jaxkuramoto.odeint` for integrating ODEs.
+This is because other ODE libraries are not supporting `observable_fn` option.
+However, [`diffrax`](https://github.com/patrick-kidger/diffrax), numerical differentiation library for JAX, is currently implementing this functionality and will be released in the future.
+We will switch to `diffrax` when it is released.
+See [this issue](https://github.com/patrick-kidger/diffrax/issues/221) and [this pull request](https://github.com/patrick-kidger/diffrax/pull/220) for more details.
+```
+
 The function `odeint` is to solve ordinary differential equations (ODEs) with the following form:
 
 $$
