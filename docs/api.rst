@@ -51,4 +51,30 @@ Theory
 
 .. autoclass:: jaxkuramoto.theory.OttAntonsen
     :members:
-    
+
+Distribution
+#################################
+
+.. autoclass:: jaxkuramoto.distribution.Distribution
+    :members:
+
+.. autoclass:: jaxkuramoto.distribution.Normal
+    :members:
+
+.. autoclass:: jaxkuramoto.distribution.Cauchy
+    :members:
+
+.. autoclass:: jaxkuramoto.distribution.Uniform
+    :members:
+
+.. autoclass:: jaxkuramoto.distribution.GeneralNormal
+    :members:
+
+.. autoclass:: jaxkuramoto.distribution.GeneralCauchy
+    :members:
+
+.. autoclass:: jaxkuramoto.distribution.CauchyMultiply
+    :members:
+
+.. autoclass:: jaxkuramoto.distribution.FiniteDifferential
+    :members:

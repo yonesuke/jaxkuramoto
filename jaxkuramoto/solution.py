@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 import jax.numpy as jnp
 
+
 @dataclass
 class Solution:
     """Solution class.

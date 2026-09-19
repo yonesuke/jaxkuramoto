@@ -3,6 +3,7 @@ from jax import random
 
 from .base import Distribution
 
+
 class Normal(Distribution):
     def __init__(self, loc: float = 0.0, scale: float = 1.0):
         """Normal distribution.

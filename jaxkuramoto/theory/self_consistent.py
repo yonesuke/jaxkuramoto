@@ -1,14 +1,17 @@
 from functools import partial
+
 import jax.numpy as jnp
 from jax import jit
 from jax.lax import cond
 from jax.scipy.special import i0, i1
-from jaxkuramoto.solver import integral_fn, fixed_point
+
 from jaxkuramoto.distribution import Distribution
+from jaxkuramoto.solver import fixed_point, integral_fn
+
 
 @partial(jit, static_argnums=(2, 3))
 def self_consistent_rhs(r, K, pdf_fn, n):
-    """Right-hand side of the self-consistent equation for the Kuramoto model.
+    r"""Right-hand side of the self-consistent equation for the Kuramoto model.
 
     $$
     r = K * r * \int_0^{2\pi} cos^2(x) g(a * sin(x)) dx

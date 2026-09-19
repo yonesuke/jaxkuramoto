@@ -2,6 +2,7 @@ from typing import Callable
 
 import jax.numpy as jnp
 
+
 def critical_point(pdf_fn: Callable, loc: float = 0.0) -> float:
     r"""Find the critical coupling strength for the Kuramoto model.
     

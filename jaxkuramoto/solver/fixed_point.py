@@ -1,7 +1,9 @@
 from functools import partial
-from jax.lax import while_loop
+
 import jax.numpy as jnp
-from jax import vjp, custom_vjp
+from jax import custom_vjp, vjp
+from jax.lax import while_loop
+
 
 @partial(custom_vjp, nondiff_argnums=(0, ))
 def fixed_point(func, a, x_guess, eps=1e-6):

@@ -1,7 +1,12 @@
 from typing import Callable
 
-from jax.tree_util import tree_map
+import jax
 import jax.numpy as jnp
+
+if hasattr(jax, "tree") and hasattr(jax.tree, "map"):
+    tree_map = jax.tree.map
+else:
+    tree_map = jax.tree_util.tree_map
 
 VECTOR_FN = Callable[[float, jnp.ndarray], jnp.ndarray]
 

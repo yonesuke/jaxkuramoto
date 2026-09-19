@@ -3,6 +3,7 @@ from jax import random
 
 from .base import Distribution
 
+
 class GeneralCauchy(Distribution):
     def __init__(self, loc: float = 0.0, gamma: float = 1.0, n: int = 1):
         """Generalized Cauchy distribution.

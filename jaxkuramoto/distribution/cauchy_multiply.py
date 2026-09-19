@@ -1,7 +1,7 @@
 import jax.numpy as jnp
-from jax import random, grad
 
 from .base import Distribution
+
 
 class CauchyMultiply(Distribution):
     def __init__(self, Omega: float, gamma1: float, gamma2: float = 1.0):

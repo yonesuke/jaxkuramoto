@@ -51,7 +51,7 @@ Default is `None`. If `None`, `observable_fn` returns the current state.
         return state
     ```
 
-    See [here](#why-observable-fn) for more details.
+    See [here](why-observable-fn) for more details.
 
 ## Returns
 
@@ -155,6 +155,7 @@ sol = odeint(
 )
 ```
 
+(why-observable-fn)=
 ### Why `observable_fn`?
 
 When solving the Kuramoto model, the number of oscillators is usually large.

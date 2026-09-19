@@ -38,3 +38,9 @@ sphinx:
     - 'sphinx.ext.autosummary'
     - 'sphinx.ext.napoleon'
     - 'sphinx.ext.viewcode'
+  config:
+    exclude_patterns:
+      - '_build'
+      - 'Thumbs.db'
+      - '.DS_Store'
+      - 'examples/slow_switch.ipynb'

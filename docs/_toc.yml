@@ -17,7 +17,7 @@ parts:
   - file: examples/bifurcation
   - file: examples/ott_antonsen
   - file: examples/phase_shift
-  - file: examples/slow_switch
+  # - file: examples/slow_switch
 - caption: Guides
   chapters:
   - file: ode_solver

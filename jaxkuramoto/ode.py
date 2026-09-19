@@ -1,8 +1,8 @@
 from typing import Callable
 
-from jax.lax import fori_loop
-from jax import jit
 import jax.numpy as jnp
+from jax import jit
+from jax.lax import fori_loop
 
 from .solution import Solution
 
@@ -76,4 +76,4 @@ def odeint(vector_fn: VECTOR_FN, solver: SOLVER, t0: float, t1: float, dt: float
     return sol
 
 def odeint_resume():
-    pass
+    raise NotImplementedError("odeint_resume is not implemented yet.")

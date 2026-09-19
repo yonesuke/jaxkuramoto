@@ -2,6 +2,7 @@ import jax.numpy as jnp
 from jax import random
 from jax.lax import while_loop
 
+
 class Distribution:
     def __init__(self):
         self.symmetric = None

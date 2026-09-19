@@ -3,6 +3,7 @@ from jax import random
 
 from .base import Distribution
 
+
 class Uniform(Distribution):
     def __init__(self, low: float = 0.0, high: float = 1.0):
         """Uniform distribution.

@@ -1,8 +1,10 @@
-import jax.numpy as jnp
-from jax import random
 import math
 
+import jax.numpy as jnp
+from jax import random
+
 from .base import Distribution
+
 
 class GeneralNormal(Distribution):
     def __init__(self, loc: float = 0.0, gamma: float = 1.0, n: int = 1):

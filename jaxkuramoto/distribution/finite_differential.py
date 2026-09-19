@@ -4,6 +4,7 @@ from jax.scipy.special import betaln
 
 from .base import Distribution
 
+
 class FiniteDifferential(Distribution):
     def __init__(self, loc: float = 0.0, scale: float = 1.0, n: int = 1):
         super().__init__()

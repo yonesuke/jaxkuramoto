@@ -1,7 +1,8 @@
 import jax.numpy as jnp
 
-from jaxkuramoto.ode import ODE
 from jaxkuramoto.distribution import Distribution
+from jaxkuramoto.ode import ODE
+
 
 class OttAntonsen(ODE):
     """Ott-Antonsen reduction of the Kuramoto model."""

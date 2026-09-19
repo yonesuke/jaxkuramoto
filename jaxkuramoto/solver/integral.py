@@ -1,7 +1,8 @@
-from typing import Callable
 from functools import partial
+
 import jax.numpy as jnp
-from jax import vmap, grad, custom_vjp
+from jax import custom_vjp, grad, vmap
+
 
 @partial(custom_vjp, nondiff_argnums=(0, 4))
 def integral_fn(func, a, minval, maxval, n) -> float:

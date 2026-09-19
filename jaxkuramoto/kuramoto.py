@@ -2,6 +2,7 @@ import jax.numpy as jnp
 
 from .ode import ODE
 
+
 class Kuramoto(ODE):
     """Kuramoto model."""
     def __init__(self, omegas: jnp.ndarray, K: float) -> None:
@@ -101,9 +102,7 @@ class NetworkKuramoto(ODE):
         self.A = adjacency_matrix
 
     def vector_fn(self, t, thetas):
-        coss, sins = jnp.cos(thetas), jnp.sin(thetas)
-        rx, ry = coss.mean(), sins.mean()
-        pass
+        raise NotImplementedError("NetworkKuramoto.vector_fn is not implemented yet.")
 
 class CirculantKuramoto(ODE):
     def __init__(self, kuramoto, xs):
@@ -111,6 +110,6 @@ class CirculantKuramoto(ODE):
         self.xs = xs
 
     def vector_fn(self, t, thetas):
-        pass
+        raise NotImplementedError("CirculantKuramoto.vector_fn is not implemented yet.")
 
     
