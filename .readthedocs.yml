@@ -10,3 +10,4 @@ build:
     - jupyter-book build --html --ci
     - mkdir --parents $READTHEDOCS_OUTPUT/html
     - cp --recursive _build/html/* $READTHEDOCS_OUTPUT/html
+    - rm -rf _build
