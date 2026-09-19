@@ -1,3 +1,4 @@
+import distrax
 import jax.numpy as jnp
 from jax import random
 
@@ -5,48 +6,33 @@ from .base import Distribution
 
 
 class Normal(Distribution):
+    """Normal (Gaussian) distribution based on distrax.Normal."""
+
     def __init__(self, loc: float = 0.0, scale: float = 1.0):
-        """Normal distribution.
-
-        Args:
-            loc: Location parameter. center = loc.
-            scale: Scale parameter. variance = scale ** 2.
-
-        Raises:
-            ValueError: If `scale` is not positive.
-
-        References:
-            https://en.wikipedia.org/wiki/Normal_distribution
-        """
         super().__init__()
         if scale <= 0:
             raise ValueError("Scale must be positive.")
+        self.loc = loc
+        self.scale = scale
         self.symmetric = True
         self.unimodal = True
         self.interval = (-jnp.inf, jnp.inf)
-        self.loc = loc
-        self.scale = scale
         self.y_max = 1.0 / jnp.sqrt(2 * jnp.pi) / self.scale
+        self._dist = distrax.Normal(loc=loc, scale=scale)
 
-    def sample(self, key, shape):
-        """Sample from the Normal distribution.
-        
-        Args:
-            key (jax.random.PRNGKey): Random number generator key.
-            shape (tuple): Shape of the sample.
-            
-        Returns:
-            jax.numpy.ndarray: Sampled values.
-        """
-        return self.loc + self.scale * random.normal(key, shape)
+    @property
+    def event_shape(self):
+        return self._dist.event_shape
 
-    def pdf(self, x: jnp.ndarray) -> jnp.ndarray:
-        """Probability density function.
-        
-        Args:
-            x (jax.numpy.ndarray): Input values.
+    @property
+    def batch_shape(self):
+        return self._dist.batch_shape
 
-        Returns:
-            jax.numpy.ndarray: Probability density values.
-        """
-        return jnp.exp(-0.5 * ((x - self.loc) / self.scale) ** 2) / jnp.sqrt(2 * jnp.pi) / self.scale
+    def _sample_n(self, key: random.PRNGKey, n: int) -> jnp.ndarray:
+        return self._dist._sample_n(key, n)
+
+    def log_prob(self, value: jnp.ndarray) -> jnp.ndarray:
+        return self._dist.log_prob(value)
+
+    def prob(self, value: jnp.ndarray) -> jnp.ndarray:
+        return self._dist.prob(value)

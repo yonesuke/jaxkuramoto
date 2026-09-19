@@ -1,5 +1,7 @@
 from functools import partial
+from typing import Union
 
+import distrax
 import jax.numpy as jnp
 from jax import jit
 from jax.lax import cond
@@ -49,12 +51,12 @@ def self_consistent_rhs_normal(r, K, sigma):
     return 0.5 * r * K / sigma * jnp.sqrt(0.5 * jnp.pi) * jnp.exp(-0.25 * r**2 * K**2 / sigma**2) * (i0_val + i1_val)
 
 @partial(jnp.vectorize, excluded=(1, ))
-def orderparam(K, dist: Distribution, n=10**3, r_guess=1.0, eps=1e-6):
+def orderparam(K, dist: Union[Distribution, distrax.Distribution], n=10**3, r_guess=1.0, eps=1e-6):
     """Solve the self-consistent equation for the Kuramoto model and return the order parameter.
 
     Args:
         K: The coupling strength.
-        dist: A function of the form pdf_fn(x) -> y.
+        dist: Distribution object (jaxkuramoto.Distribution or distrax.Distribution).
         n: Number of trapezoids to use in the integral.
         r_guess: The initial guess for the order parameter.
         eps: The tolerance for the fixed point solver.
@@ -62,17 +64,36 @@ def orderparam(K, dist: Distribution, n=10**3, r_guess=1.0, eps=1e-6):
     Returns:
         Order parameter.
     """
-    if (not dist.symmetric) or (not dist.unimodal):
+    is_symmetric = getattr(dist, "symmetric", None)
+    is_unimodal = getattr(dist, "unimodal", None)
+    if is_symmetric is False or is_unimodal is False:
         raise ValueError("Distribution must be symmetric and unimodal.")
-    if dist.__class__.__name__ == "Uniform":
-        return _orderparam_uniform(K, dist.scale, r_guess, eps)
+
+    if isinstance(dist, distrax.Normal) or dist.__class__.__name__ == "Normal":
+        scale = getattr(dist, "scale", getattr(dist, "stddev", None))
+        return _orderparam_normal(K, scale, r_guess, eps)
+    elif isinstance(dist, distrax.Uniform) or dist.__class__.__name__ == "Uniform":
+        if hasattr(dist, "scale"):
+            width = dist.scale
+        else:
+            center = (dist.high + dist.low) / 2.0
+            if not jnp.isclose(center, 0.0):
+                raise ValueError("Uniform distribution must be centered at 0.")
+            width = (dist.high - dist.low) / 2.0
+        return _orderparam_uniform(K, width, r_guess, eps)
     elif dist.__class__.__name__ == "Cauchy":
-        return _orderparam_cauchy(K, dist.gamma)
-    elif dist.__class__.__name__ == "Normal":
-        return _orderparam_normal(K, dist.scale, r_guess, eps)
+        gamma = getattr(dist, "gamma", getattr(dist, "scale", None))
+        return _orderparam_cauchy(K, gamma)
     else:
-        pdf_centered = lambda x: dist.pdf(x - dist.loc)
+        loc = getattr(dist, "loc", 0.0)
+        if hasattr(dist, "prob"):
+            pdf_centered = lambda x: dist.prob(x + loc)
+        elif hasattr(dist, "pdf"):
+            pdf_centered = lambda x: dist.pdf(x + loc)
+        else:
+            pdf_centered = lambda x: jnp.exp(dist.log_prob(x + loc))
         return fixed_point(partial(self_consistent_rhs, pdf_fn=pdf_centered, n=n), K, r_guess, eps)
+
 
 @jit
 def _orderparam_cauchy(K, gamma):

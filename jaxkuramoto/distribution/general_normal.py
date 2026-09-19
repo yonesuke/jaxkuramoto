@@ -7,18 +7,9 @@ from .base import Distribution
 
 
 class GeneralNormal(Distribution):
+    """Generalized normal distribution compliant with distrax.Distribution."""
+
     def __init__(self, loc: float = 0.0, gamma: float = 1.0, n: int = 1):
-        """Generalized normal distribution.
-
-        Args:
-            loc: Location parameter.
-            gamma: Scale parameter.
-            n: Degree of distribution (1 for normal). p(x)=p(0)-C*x^(2n)+...
-
-        Raises:
-            ValueError: If `gamma` is not positive.
-            ValueError: If `n` is not positive.
-        """
         super().__init__()
         if gamma <= 0:
             raise ValueError("Gamma must be positive.")
@@ -37,29 +28,16 @@ class GeneralNormal(Distribution):
         self.x_min = self.loc - width
         self.x_max = self.loc + width
 
-    def sample(self, key, shape):
-        """Sample from the generalized normal distribution.
-        
-        Args:
-            key (jax.random.PRNGKey): Random number generator key.
-            shape (tuple): Shape of the sample.
-            
-        Returns:
-            jax.numpy.ndarray: Sampled values.
-        """
+    def _sample_n(self, key: random.PRNGKey, n: int) -> jnp.ndarray:
         if self.n == 1:
             scale = 1.0 / self.gamma / jnp.sqrt(2.0 * jnp.pi)
-            return self.loc + scale * random.normal(key, shape)
+            return self.loc + scale * random.normal(key, (n,))
         else:
-            return self._rejection_sampling(key, shape, self.x_min, self.x_max)
+            return self._rejection_sampling(key, (n,), self.x_min, self.x_max)
 
-    def pdf(self, x: jnp.ndarray) -> jnp.ndarray:
-        """Probability density function.
-        
-        Args:
-            x (jax.numpy.ndarray): Input values.
+    def log_prob(self, value: jnp.ndarray) -> jnp.ndarray:
+        log_norm = jnp.log(self.n * self.gamma) - math.lgamma(0.5 / self.n)
+        return log_norm - (self.gamma * (value - self.loc)) ** (2 * self.n)
 
-        Returns:
-            jax.numpy.ndarray: Probability density values.
-        """
-        return self.n * self.gamma * jnp.exp(-(self.gamma * x)**(2*self.n)) / math.gamma(0.5 / self.n)
+    def prob(self, value: jnp.ndarray) -> jnp.ndarray:
+        return self.n * self.gamma * jnp.exp(- (self.gamma * (value - self.loc)) ** (2 * self.n)) / math.gamma(0.5 / self.n)

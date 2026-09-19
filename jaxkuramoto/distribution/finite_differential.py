@@ -6,6 +6,8 @@ from .base import Distribution
 
 
 class FiniteDifferential(Distribution):
+    """Finite differential distribution compliant with distrax.Distribution."""
+
     def __init__(self, loc: float = 0.0, scale: float = 1.0, n: int = 1):
         super().__init__()
         if scale <= 0:
@@ -16,42 +18,28 @@ class FiniteDifferential(Distribution):
             raise ValueError("N must be positive.")
         self.symmetric = True
         self.unimodal = True
-        self.interval = (-jnp.inf, jnp.inf)
         self.loc = loc
         self.scale = scale
         self.n = n
         self.x_min = self.loc - self.scale
         self.x_max = self.loc + self.scale
         self.interval = (self.x_min, self.x_max)
-        self.normalizer = 1 / scale * jnp.exp(- betaln(n + 2, 0.5))
+        self.normalizer = 1.0 / scale * jnp.exp(-betaln(n + 2, 0.5))
         self.y_max = self.normalizer
 
-    def sample(self, key, shape):
-        """Sample from the generalized Cauchy distribution.
-        
-        Args:
-            key (jax.random.PRNGKey): Random number generator key.
-            shape (tuple): Shape of the sample.
-            
-        Returns:
-            jax.numpy.ndarray: Sampled values.
-        """
-        if self.n == 1:
-            return self.loc + self.scale * random.cauchy(key, shape)
-        else:
-            return self._rejection_sampling(key, shape, self.x_min, self.x_max)
-    
-    def pdf(self, x: jnp.ndarray) -> jnp.ndarray:
-        """Probability density function.
-        
-        Args:
-            x (jax.numpy.ndarray): Input values.
+    def _sample_n(self, key: random.PRNGKey, n: int) -> jnp.ndarray:
+        return self._rejection_sampling(key, (n,), self.x_min, self.x_max)
 
-        Returns:
-            jax.numpy.ndarray: Probability density values.
-        """
-        return jnp.where(
-            (x >= self.x_min) * (x <= self.x_max), # check if x is in the interval
-            self.normalizer * jnp.power(1 - ((x - self.loc) / self.scale) ** 2, self.n + 1), # true branch
-            0 # false branch
-        )
+    def log_prob(self, value: jnp.ndarray) -> jnp.ndarray:
+        standardized = (value - self.loc) / self.scale
+        in_support = (value >= self.x_min) & (value <= self.x_max)
+        safe_std = jnp.where(in_support, standardized, 0.0)
+        log_p = -jnp.log(self.scale) - betaln(self.n + 2, 0.5) + (self.n + 1) * jnp.log1p(-safe_std ** 2)
+        return jnp.where(in_support, log_p, -jnp.inf)
+
+    def prob(self, value: jnp.ndarray) -> jnp.ndarray:
+        standardized = (value - self.loc) / self.scale
+        in_support = (value >= self.x_min) & (value <= self.x_max)
+        safe_std = jnp.where(in_support, standardized, 0.0)
+        p = self.normalizer * ((1.0 - safe_std ** 2) ** (self.n + 1))
+        return jnp.where(in_support, p, 0.0)

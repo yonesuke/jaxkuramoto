@@ -5,48 +5,27 @@ from .base import Distribution
 
 
 class Cauchy(Distribution):
-    def __init__(self, loc: float = 0.0, gamma: float = 1.0):
-        """Cauchy distribution.
+    """Cauchy (Lorentzian) distribution compliant with distrax.Distribution."""
 
-        Args:
-            loc: Location parameter.
-            gamma: Scale parameter.
-
-        Raises:
-            ValueError: If `gamma` is not positive.
-
-        References:
-            https://en.wikipedia.org/wiki/Cauchy_distribution
-        """
+    def __init__(self, loc: float = 0.0, gamma: float = None, scale: float = None):
         super().__init__()
-        if gamma <= 0:
-            raise ValueError("Gamma must be positive.")
+        actual_scale = scale if scale is not None else (gamma if gamma is not None else 1.0)
+        if actual_scale <= 0:
+            raise ValueError("Scale/gamma must be positive.")
+        self.loc = loc
+        self.gamma = actual_scale
+        self.scale = actual_scale
         self.symmetric = True
         self.unimodal = True
         self.interval = (-jnp.inf, jnp.inf)
-        self.loc = loc
-        self.gamma = gamma
         self.y_max = 1.0 / jnp.pi / self.gamma
 
-    def sample(self, key, shape):
-        """Sample from the Cauchy distribution.
-        
-        Args:
-            key (jax.random.PRNGKey): Random number generator key.
-            shape (tuple): Shape of the sample.
-            
-        Returns:
-            jax.numpy.ndarray: Sampled values.
-        """
-        return self.loc + self.gamma * random.cauchy(key, shape)
+    def _sample_n(self, key: random.PRNGKey, n: int) -> jnp.ndarray:
+        return self.loc + self.gamma * random.cauchy(key, (n,))
 
-    def pdf(self, x: jnp.ndarray) -> jnp.ndarray:
-        """Probability density function.
-        
-        Args:
-            x (jax.numpy.ndarray): Input values.
+    def log_prob(self, value: jnp.ndarray) -> jnp.ndarray:
+        standardized = (value - self.loc) / self.gamma
+        return -jnp.log(jnp.pi * self.gamma) - jnp.log1p(standardized ** 2)
 
-        Returns:
-            jax.numpy.ndarray: Probability density values.
-        """
-        return self.gamma / jnp.pi / (self.gamma ** 2 + (x - self.loc) ** 2)
+    def prob(self, value: jnp.ndarray) -> jnp.ndarray:
+        return self.gamma / (jnp.pi * (self.gamma ** 2 + (value - self.loc) ** 2))

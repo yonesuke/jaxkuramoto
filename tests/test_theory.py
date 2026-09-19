@@ -36,6 +36,25 @@ def test_orderparam_normal_and_uniform():
     assert 0.0 <= r_uni <= 1.0
 
 
+def test_orderparam_with_distrax_distributions():
+    import distrax
+
+    # Native distrax.Normal
+    dn = distrax.Normal(loc=0.0, scale=1.0)
+    r_dn = orderparam(4.0, dn)
+    assert 0.0 <= r_dn <= 1.0
+
+    # Native distrax.Uniform
+    du = distrax.Uniform(low=-1.0, high=1.0)
+    r_du = orderparam(4.0, du)
+    assert 0.0 <= r_du <= 1.0
+
+    # Ensure results match jaxkuramoto classes
+    n = Normal(loc=0.0, scale=1.0)
+    assert jnp.isclose(r_dn, orderparam(4.0, n), atol=1e-5)
+
+
+
 def test_ott_antonsen_cauchy():
     dist = Cauchy(loc=0.0, gamma=1.0)
     oa = OttAntonsen(dist=dist, K=4.0)

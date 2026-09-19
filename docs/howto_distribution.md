@@ -1,6 +1,6 @@
 # How to use `distribution`
 
-In `jaxkuramoto`, we provide a class `Distribution` to deal with distributions. The class has the `sample` method, so you can sample from the distribution as follows.
+In `jaxkuramoto`, distributions inherit from Google DeepMind's [`distrax.Distribution`](https://github.com/google-deepmind/distrax). This provides full compatibility with the JAX probability ecosystem, supporting both standard Distrax methods (`log_prob`, `prob`, `sample(seed=..., sample_shape=...)`) and jaxkuramoto-style calls (`pdf`, `sample(key, shape)`).
 
 ```python
 import jax; jax.config.update("jax_enable_x64", True)
@@ -11,19 +11,26 @@ n_sample = 100
 dist = Cauchy(0.0, 1.0)
 
 seed = 0; key = random.PRNGKey(seed)
+# jaxkuramoto calling style:
 samples = dist.sample(key, (n_sample,))
+# or distrax calling style:
+samples = dist.sample(seed=key, sample_shape=(n_sample,))
+
+# Density and log-density
+density = dist.prob(0.0)      # or dist.pdf(0.0)
+log_density = dist.log_prob(0.0)
 ```
 
-The `sample` method takes a `PRNGKey` and a shape of samples as arguments. The shape of samples is a tuple of integers. The `sample` method returns a `DeviceArray` of samples.
-
-We prepare some distributions in `jaxkuramoto.distribution`. The distributions are as follows.
-- `Normal`: The normal distribution.
+We prepare some distributions in `jaxkuramoto.distribution`. The distributions are as follows:
+- `Normal`: The normal distribution (inheriting from `distrax.Normal`).
 - `Cauchy`: The Cauchy distribution.
-- `Uniform`: The uniform distribution.
+- `Uniform`: The uniform distribution (inheriting from `distrax.Uniform`).
 - `GeneralNormal`: The generalized normal distribution.
 - `GeneralCauchy`: The generalized Cauchy distribution.
 - `CauchyMultiply`: The product of two Cauchy distributions.
 - `FiniteDifferential`: The finite-differentiable distribution.
+
+You can also use native Distrax distributions (such as `distrax.Normal` or `distrax.Uniform`) directly in `jaxkuramoto.theory.orderparam`.
 
 Check out [List of distributions](distributions) for more details.
 

@@ -18,8 +18,14 @@ def test_normal_distribution():
     key = jax.random.PRNGKey(0)
     samples = dist.sample(key, (100,))
     assert samples.shape == (100,)
+    samples_distrax = dist.sample(seed=key, sample_shape=(50,))
+    assert samples_distrax.shape == (50,)
     pdf_val = dist.pdf(0.0)
+    prob_val = dist.prob(0.0)
+    log_prob_val = dist.log_prob(0.0)
     assert jnp.isclose(pdf_val, 1.0 / jnp.sqrt(2.0 * jnp.pi), atol=1e-4)
+    assert jnp.isclose(pdf_val, prob_val)
+    assert jnp.isclose(jnp.exp(log_prob_val), prob_val, atol=1e-5)
 
 
 def test_cauchy_distribution():
@@ -27,8 +33,14 @@ def test_cauchy_distribution():
     key = jax.random.PRNGKey(1)
     samples = dist.sample(key, (50,))
     assert samples.shape == (50,)
+    samples_distrax = dist.sample(seed=key, sample_shape=(30,))
+    assert samples_distrax.shape == (30,)
     pdf_val = dist.pdf(0.0)
+    prob_val = dist.prob(0.0)
+    log_prob_val = dist.log_prob(0.0)
     assert jnp.isclose(pdf_val, 1.0 / jnp.pi, atol=1e-4)
+    assert jnp.isclose(pdf_val, prob_val)
+    assert jnp.isclose(jnp.exp(log_prob_val), prob_val, atol=1e-5)
 
 
 def test_uniform_distribution():
@@ -36,9 +48,15 @@ def test_uniform_distribution():
     key = jax.random.PRNGKey(2)
     samples = dist.sample(key, (50,))
     assert samples.shape == (50,)
+    samples_distrax = dist.sample(seed=key, sample_shape=(30,))
+    assert samples_distrax.shape == (30,)
     assert jnp.all((samples >= -2.0) & (samples <= 2.0))
     pdf_val = dist.pdf(0.0)
+    prob_val = dist.prob(0.0)
+    log_prob_val = dist.log_prob(0.0)
     assert jnp.isclose(pdf_val, 0.25, atol=1e-4)
+    assert jnp.isclose(pdf_val, prob_val)
+    assert jnp.isclose(jnp.exp(log_prob_val), prob_val, atol=1e-5)
 
 
 def test_general_normal():
@@ -46,8 +64,14 @@ def test_general_normal():
     key = jax.random.PRNGKey(3)
     samples = dist.sample(key, (20,))
     assert samples.shape == (20,)
+    samples_distrax = dist.sample(seed=key, sample_shape=(10,))
+    assert samples_distrax.shape == (10,)
     pdf_val = dist.pdf(0.0)
+    prob_val = dist.prob(0.0)
+    log_prob_val = dist.log_prob(0.0)
     assert pdf_val > 0.0
+    assert jnp.isclose(pdf_val, prob_val)
+    assert jnp.isclose(jnp.exp(log_prob_val), prob_val, atol=1e-5)
 
 
 def test_general_cauchy():
@@ -55,8 +79,14 @@ def test_general_cauchy():
     key = jax.random.PRNGKey(4)
     samples = dist.sample(key, (20,))
     assert samples.shape == (20,)
+    samples_distrax = dist.sample(seed=key, sample_shape=(10,))
+    assert samples_distrax.shape == (10,)
     pdf_val = dist.pdf(0.0)
+    prob_val = dist.prob(0.0)
+    log_prob_val = dist.log_prob(0.0)
     assert pdf_val > 0.0
+    assert jnp.isclose(pdf_val, prob_val)
+    assert jnp.isclose(jnp.exp(log_prob_val), prob_val, atol=1e-5)
 
 
 def test_cauchy_multiply():
@@ -64,11 +94,30 @@ def test_cauchy_multiply():
     key = jax.random.PRNGKey(5)
     samples = dist.sample(key, (20,))
     assert samples.shape == (20,)
+    samples_distrax = dist.sample(seed=key, sample_shape=(10,))
+    assert samples_distrax.shape == (10,)
     pdf_val = dist.pdf(0.0)
+    prob_val = dist.prob(0.0)
+    log_prob_val = dist.log_prob(0.0)
     assert pdf_val > 0.0
+    assert jnp.isclose(pdf_val, prob_val)
+    assert jnp.isclose(jnp.exp(log_prob_val), prob_val, atol=1e-5)
 
 
 def test_finite_differential():
     dist = FiniteDifferential(loc=0.0, scale=1.0, n=1)
+    key = jax.random.PRNGKey(6)
+    samples = dist.sample(key, (20,))
+    assert samples.shape == (20,)
+    samples_distrax = dist.sample(seed=key, sample_shape=(10,))
+    assert samples_distrax.shape == (10,)
     pdf_val = dist.pdf(0.0)
+    prob_val = dist.prob(0.0)
+    log_prob_val = dist.log_prob(0.0)
     assert pdf_val > 0.0
+    assert jnp.isclose(pdf_val, prob_val)
+    assert jnp.isclose(jnp.exp(log_prob_val), prob_val, atol=1e-5)
+    # Out of bounds check
+    assert dist.prob(2.0) == 0.0
+    assert jnp.isneginf(dist.log_prob(2.0))
+

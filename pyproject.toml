@@ -25,6 +25,7 @@ classifiers = [
 ]
 dependencies = [
     "jax>=0.4.0",
+    "distrax>=0.1.5",
 ]
 
 [project.optional-dependencies]

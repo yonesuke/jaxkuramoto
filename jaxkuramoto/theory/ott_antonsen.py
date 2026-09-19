@@ -1,26 +1,30 @@
+from typing import Union
+
+import distrax
 import jax.numpy as jnp
 
-from jaxkuramoto.distribution import Distribution
+from jaxkuramoto.distribution import Cauchy, CauchyMultiply, Distribution
 from jaxkuramoto.ode import ODE
 
 
 class OttAntonsen(ODE):
     """Ott-Antonsen reduction of the Kuramoto model."""
-    def __init__(self, dist: Distribution, K: float) -> None:
+
+    def __init__(self, dist: Union[Distribution, distrax.Distribution], K: float) -> None:
         """Ott-Antonsen reduction of the Kuramoto model.
 
         Args:
-            dist (Distribution): Distribution of natural frequencies.
+            dist (Union[Distribution, distrax.Distribution]): Distribution of natural frequencies.
             K (float): Coupling strength.
         """
         super().__init__()
         self.dist = dist
         self.dist_name = dist.__class__.__name__
         self.K = K
-        if self.dist_name == "Cauchy":
+        if isinstance(dist, Cauchy) or self.dist_name == "Cauchy":
             self.vector_fn = self._vector_fn_cauchy
             self.to_orderparam = lambda _, z: jnp.abs(z)
-        elif self.dist_name == "CauchyMultiply":
+        elif isinstance(dist, CauchyMultiply) or self.dist_name == "CauchyMultiply":
             self.vector_fn = self._vector_fn_cauchymultiply
             self.k1 = dist.gamma2 * (2 * dist.Omega - 1j * (dist.gamma1 + dist.gamma2)) / (dist.gamma1 + dist.gamma2) / (2 * dist.Omega + 1j * (dist.gamma1 - dist.gamma2))
             self.k2 = dist.gamma1 * (2 * dist.Omega + 1j * (dist.gamma1 + dist.gamma2)) / (dist.gamma1 + dist.gamma2) / (2 * dist.Omega + 1j * (dist.gamma1 - dist.gamma2))
@@ -28,6 +32,7 @@ class OttAntonsen(ODE):
             self.to_orderparam = lambda _, zs: jnp.abs(self.zs2z(zs))
         else:
             raise ValueError("Distribution must be Cauchy or CauchyMultiply.")
+
 
     def _vector_fn_cauchy(self, t, z: jnp.ndarray) -> jnp.ndarray:
         """Vector field of Ott-Antonsen reduction of the Kuramoto model with the Cauchy distribution.
