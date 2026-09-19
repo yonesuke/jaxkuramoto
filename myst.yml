@@ -1,0 +1,47 @@
+version: 1
+project:
+  id: jaxkuramoto
+  title: jaxkuramoto
+  description: JAX implementation of the Kuramoto model.
+  keywords:
+    - Kuramoto model
+    - synchronization
+    - JAX
+    - nonlinear dynamics
+  authors:
+    - name: Ryosuke Yoneda
+      email: 13e.e.c.13@gmail.com
+  github: https://github.com/yonesuke/jaxkuramoto
+  bibliography:
+    - docs/references.bib
+  toc:
+    - file: docs/index.md
+    - title: Getting Started
+      children:
+        - file: docs/installation.md
+        - file: docs/synchronization.md
+        - file: docs/why_kuramoto.md
+        - file: docs/howto_odeint.md
+        - file: docs/howto_distribution.md
+    - title: Examples
+      children:
+        - file: docs/examples/kuramoto.ipynb
+        - file: docs/examples/bifurcation.ipynb
+        - file: docs/examples/ott_antonsen.ipynb
+        - file: docs/examples/phase_shift.ipynb
+    - title: Guides
+      children:
+        - file: docs/ode_solver.md
+        - file: docs/nonlinear_solver.md
+        - file: docs/distributions.ipynb
+        - file: docs/models.md
+    - title: Package Reference
+      children:
+        - file: docs/api.md
+
+site:
+  template: book-theme
+  title: jaxkuramoto
+  nav:
+    - title: GitHub
+      url: https://github.com/yonesuke/jaxkuramoto

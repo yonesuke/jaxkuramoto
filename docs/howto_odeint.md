@@ -51,7 +51,7 @@ Default is `None`. If `None`, `observable_fn` returns the current state.
         return state
     ```
 
-    See [here](why-observable-fn) for more details.
+    See [here](#why-observable-fn) for more details.
 
 ## Returns
 
